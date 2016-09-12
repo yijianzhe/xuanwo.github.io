@@ -49,7 +49,7 @@
                                     class="badge">4</span></a></li>
                 
                     <li><a href="/categories/Develop/">Develop <span
-                                    class="badge">12</span></a></li>
+                                    class="badge">13</span></a></li>
                 
                     <li><a href="/categories/Summary/">Summary <span
                                     class="badge">4</span></a></li>
@@ -57,7 +57,7 @@
                     <li><a href="/categories/Operate/">Operate <span
                                     class="badge">2</span></a></li>
                 
-                    <li><a href="/categories/Developer/">Developer <span
+                    <li><a href="/categories/Develope/">Develope <span
                                     class="badge">1</span></a></li>
                 
             </ul>
@@ -91,6 +91,54 @@
         
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            
+                
+    <article class="clearfix">
+        <div class="post-date">
+            发表于
+            <time datetime="2014-11-04T15:19:29+00:00"
+                  content="Nov 4 2014">
+                Nov 4 2014
+            </time>
+            &nbsp;|&nbsp;分类于
+            
+                
+                    <a href="/categories/Exercise/" rel="index">
+                        Exercise
+                        
+                        
+                    </a>
+                
+            
+            <span>
+            <a href="/2014/11/04/UVa-120-Stacks-of-Flapjacks/#disqus_thread" data-disqus-identifier="2014/11/04/UVa-120-Stacks-of-Flapjacks/">
+              <span class="disqus-comment-count" data-disqus-identifier="2014/11/04/UVa-120-Stacks-of-Flapjacks/"></span>
+            </a>
+          </span>
+        </div>
+        <h1><a href="/2014/11/04/UVa-120-Stacks-of-Flapjacks/">UVa 120 Stacks of Flapjacks</a></h1>
+        
+            
+                <h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>源地址：</p>
+<p><a href="http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=56">http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=56</a></p>
+<h1 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h1><p>特别涨姿势的一道题。<br>题目不难，只要理解题目中所谓的翻转的意思，很好做。但是我在看题解的过程中，被STL的各种酷炫吓呆，感觉string类真的好好用= =。要是自己用char数组模拟的话，可能会写得各种坑。</p>
+<p>默默记录一下：</p>
+<ul>
+<li><code>istringstream iss(str);</code>，专门用于操作string类的一个类，可以这样用<code>for(int tmp; iss&gt;&gt;tmp; que.push_front(tmp));</code>。超酷炫有木有！。！</li>
+<li><code>deque&lt;int&gt;::iterator it</code> 迭代器，方便好用不多说= =</li>
+<li><code>reverse(Max, que.end());</code> 用于容器中两个元素的交换，超级好用。</li>
+<li><code>distance(que.begin(), Max)</code> 返回两个迭代器之间的距离，也是相当的赞。</li>
+</ul>
+<p>恩- -，好好学STL，大有前途。</p>
+                <a class="" href="/2014/11/04/UVa-120-Stacks-of-Flapjacks/">Read more</a>
+            
+        
+        <div class="post-footer">
+            
+            
+        </div>
+    </article>
+
             
                 
     <article class="clearfix">
@@ -454,48 +502,6 @@
     </article>
 
             
-                
-    <article class="clearfix">
-        <div class="post-date">
-            发表于
-            <time datetime="2014-11-02T17:30:22+00:00"
-                  content="Nov 2 2014">
-                Nov 2 2014
-            </time>
-            &nbsp;|&nbsp;分类于
-            
-                
-                    <a href="/categories/Exercise/" rel="index">
-                        Exercise
-                        
-                        
-                    </a>
-                
-            
-            <span>
-            <a href="/2014/11/02/CF-3C/#disqus_thread" data-disqus-identifier="2014/11/02/CF-3C/">
-              <span class="disqus-comment-count" data-disqus-identifier="2014/11/02/CF-3C/"></span>
-            </a>
-          </span>
-        </div>
-        <h1><a href="/2014/11/02/CF-3C/">Codeforces Beta Round 3 C Tic-tac-toe</a></h1>
-        
-            
-                <h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>源地址：</p>
-<p><a href="http://codeforces.com/problemset/problem/3/C">http://codeforces.com/problemset/problem/3/C</a></p>
-<h1 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h1><p>一开始看到3*3，第一反应是想要枚举出所有可能的情况，也就是总共有9^3次种，但是发现自己很难处理这些情况，后来还是决定用暴力模拟的方法来做。</p>
-<h2 id="错误解法"><a href="#错误解法" class="headerlink" title="错误解法"></a>错误解法</h2><p>为了简化情况的讨论，我取’.’为0，’X’为1，’0’为2。这样，只要三个数的积为0，说明没有人胜利；三个数的积为1，说明先手胜；三个数的积为8，说明后手胜。这样，在判定胜负的时候，情况就简单了很多。<br>但是，我犯的错误就是对非法的状况考虑得不全面，或者说，懒得去自己判定是否非法，直接将非法的判断写在else语句里面，导致这段语句摆在前面挂test4，摆在后面挂test8这样尴尬局面的发生。</p>
-<h2 id="正确解法"><a href="#正确解法" class="headerlink" title="正确解法"></a>正确解法</h2><p>赛后我重新写了这道题，正面强干，没有转换成int数组来处理。将胜负判定和非法判定全都写成了独立的函数，在最开始先判断是否非法，然后判定有没有出现胜者，最后判定是谁进行下一步。</p>
-                <a class="" href="/2014/11/02/CF-3C/">Read more</a>
-            
-        
-        <div class="post-footer">
-            
-            
-        </div>
-    </article>
-
-            
 
             
     <nav class="pagination">
@@ -517,7 +523,7 @@
 
                     <div class="stats">
                         <div class="line">
-                            <span class="counter">394</span>
+                            <span class="counter">395</span>
                             <span class="caption">Articles</span>
                         </div>
                         <div class="line">
@@ -536,7 +542,7 @@
                     <div class="post-recent-widget">
                         <div class="row">
                             <div class="col-sm-12">
-                                <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/nodebb-plugin-html5videoplayer/">nodebb-plugin-html5videoplayer 发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/08/nodebb-upgrade/">NodeBB 升级迁移总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/29/new-blog-new-life/">新博客上线&Hexo主题开发入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/16/jade_ims/">马可波罗珠宝进销存系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/03/owncloud-on-qingcloud/">在QingCloud上部署弹性扩容的OwnCloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/29/learn-from-qingchat/">我从Qingchat中学到的教训</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/09/msp430g2553-bellring/">基于MSP430G2553的打铃系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/gitlab-install-intro/">Gitlab部署和汉化以及简单运维</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/04/docopt-intro/">docopt——好用的Python命令行参数解释器</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/01/qingchat-intro/">微信多群直播的新探索——Qingchat</a></li></ul>
+                                <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/nodebb-plugin-html5videoplayer/">nodebb-plugin-html5videoplayer 发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/13/dynamic-page-data-spider/">动态网页数据抓取踩坑分享</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/08/nodebb-upgrade/">NodeBB 升级迁移总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/29/new-blog-new-life/">新博客上线&Hexo主题开发入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/16/jade_ims/">马可波罗珠宝进销存系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/03/owncloud-on-qingcloud/">在QingCloud上部署弹性扩容的OwnCloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/29/learn-from-qingchat/">我从Qingchat中学到的教训</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/09/msp430g2553-bellring/">基于MSP430G2553的打铃系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/gitlab-install-intro/">Gitlab部署和汉化以及简单运维</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/04/docopt-intro/">docopt——好用的Python命令行参数解释器</a></li></ul>
                             </div>
                         </div>
                     </div>
@@ -586,11 +592,17 @@
                         
                             <li><a href="/tags/复习/">复习</a></li>
                         
+                            <li><a href="/tags/Nodejs/">Nodejs</a></li>
+                        
                             <li><a href="/tags/Python/">Python</a></li>
                         
                             <li><a href="/tags/qingchat/">qingchat</a></li>
                         
-                            <li><a href="/tags/Nodejs/">Nodejs</a></li>
+                            <li><a href="/tags/QingCloud/">QingCloud</a></li>
+                        
+                            <li><a href="/tags/Work/">Work</a></li>
+                        
+                            <li><a href="/tags/爬虫/">爬虫</a></li>
                         
                             <li><a href="/tags/运维/">运维</a></li>
                         
@@ -613,12 +625,6 @@
                             <li><a href="/tags/JavaScript/">JavaScript</a></li>
                         
                             <li><a href="/tags/实习/">实习</a></li>
-                        
-                            <li><a href="/tags/QingCloud/">QingCloud</a></li>
-                        
-                            <li><a href="/tags/Work/">Work</a></li>
-                        
-                            <li><a href="/tags/爬虫/">爬虫</a></li>
                         
                             <li><a href="/tags/单片机/">单片机</a></li>
                         

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://xuanwo.org/"/>
-  <updated>2016-09-12T17:18:13.847Z</updated>
+  <updated>2016-09-12T18:02:17.934Z</updated>
   <id>https://xuanwo.org/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://xuanwo.org/2016/08/22/nodebb-plugin-html5videoplayer/"/>
     <id>https://xuanwo.org/2016/08/22/nodebb-plugin-html5videoplayer/</id>
     <published>2016-08-22T17:53:25.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<p><a href="">nodebb-plugin-html5videoplayer</a> 是一个简单的 NodeBB 插件，可以让 NodeBB 支持在线视频观看。Fork 自 <a href="https://github.com/ogerly" target="_blank" rel="external">@ogerly</a> 开发的 <a href="https://github.com/ogerly/nodebb-plugin-videoplayer" target="_blank" rel="external">nodebb-plugin-videoplayer</a>， 在他的基础上做了一些微不足道的贡献，括弧笑。</p>
 <a id="more"></a>
@@ -55,7 +55,7 @@
     
     </summary>
     
-      <category term="Developer" scheme="https://xuanwo.org/categories/Developer/"/>
+      <category term="Develope" scheme="https://xuanwo.org/categories/Develope/"/>
     
     
       <category term="JavaScript" scheme="https://xuanwo.org/tags/JavaScript/"/>
@@ -67,11 +67,74 @@
   </entry>
   
   <entry>
+    <title>动态网页数据抓取踩坑分享</title>
+    <link href="https://xuanwo.org/2016/07/13/dynamic-page-data-spider/"/>
+    <id>https://xuanwo.org/2016/07/13/dynamic-page-data-spider/</id>
+    <published>2016-07-13T01:58:33.000Z</published>
+    <updated>2016-09-12T18:02:17.930Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前做了一些数据抓取的工作，期间也踩了一些坑，所以有了这篇文章。</p>
+<a id="more"></a>
+<h2 id="动态网页数据源获取"><a href="#动态网页数据源获取" class="headerlink" title="动态网页数据源获取"></a>动态网页数据源获取</h2><p>需要抓取的页面是使用<a href="https://facebook.github.io/react/" target="_blank" rel="external">React</a> JavaScript 框架开发的，所有的页面都是客户端渲染而成，这也就导致我只能看到一个个的 data-id ，没有办法直接获取数据。这就涉及到一个我之前没有接触过的领域——动态网页爬虫。<br>一番 Google 之后，我了解到动态网页爬虫大致上可以通过以下两种方法实现：</p>
+<ul>
+<li>分析网页代码结构和请求，找到数据源的请求链接</li>
+<li>调用Webkit渲染之后再进行抓取</li>
+</ul>
+<p>第二种方法相当于在命令行中跑一个浏览器，一个页面一个页面的打开，效率可想而知。再加上待抓取页面的 DOM 结构本来就比较复杂，没有添加相应的 class 和 id，导致即使渲染出来了想要抓到自己需要的数据也非常费劲。<br>于是只能采用第一种方案：分析了一下网页的代码之后发现所有的数据都是通过一个接口返回的。使用 Chrome 审查工具中的 <code>Network</code> 工具可以获取到所有的网络请求，在里面搜索 <code>JSON</code> ，找到了一个 JSON 的请求。点开一看正是我们需要的数据，解决了动态网页数据源的问题。</p>
+<h2 id="分类不统一"><a href="#分类不统一" class="headerlink" title="分类不统一"></a>分类不统一</h2><p>这个坑主要出在自己对目标网页的数据特性挖掘的不够。一开始以为目标网页是按照一个特定的分类来区分的，但是后来发现这个标准并不统一，最后抓取到的数据不在一个维度上。正当自己准备开工写很多特判的时候发现，如果从另外一个维度来索取数据的话，所有的数据都是统一的。<br>在这个案例中，就是将人为的分类切换成通过价格来获取数据，通过选择所有价格，就能获取到所有的数据，不需要再对不同维度的分类进行特判。<br>这个与其说是技术问题，更多的是一个经验的问题。</p>
+<h2 id="页面内部JS执行"><a href="#页面内部JS执行" class="headerlink" title="页面内部JS执行"></a>页面内部JS执行</h2><p>这个坑就比较有趣了。<br>目标网页除了通过一个特定的接口获取数据之外，还会在页面内部通过 JavaScript 来直接传递数据。背后的技术考量不得而知，但是摆在我面前的问题就是我要如何获取这些 JavaScript 代码中的数据。<br>思考了一下之后想到了两种方案：</p>
+<ul>
+<li>自行匹配需要的字符串</li>
+<li>通过 phatomjs 等工具执行页面内部的 js 代码，并输出需要的数据变量</li>
+</ul>
+<p>自行匹配的问题在于，我需要匹配的字符串的格式不一，很难直接匹配出我需要的数据。而通过 phatomjs 执行，就能比较好的解决这个问题。</p>
+<p>一个比较脏的解决方案是这样的：</p>
+<ol>
+<li>下载整个HTML页面到 <code>test.html</code></li>
+<li>通过 bs4 获取到所有的 <code>&lt;script&gt;</code> 标签内部的内容</li>
+<li>将我们需要的那个标签输出到一个 <code>data.js</code> 文件中</li>
+<li>之后把将数据构造成 json 的 js 代码写入 <code>data.js</code> 文件</li>
+<li>通过 phatomjs 来执行代码</li>
+<li>将输出通过 <code>json.loads</code> 载入并 append 到我们的数据数组中</li>
+</ol>
+<p>这样，我们就获得了页面内部js代码中数据的json形式。</p>
+<blockquote>
+<p>phatomjs 中执行的代码最后，千万要记得加上 <code>phatom.exit()</code>，否则不会自行退出。</p>
+</blockquote>
+<h2 id="phatomjs报错"><a href="#phatomjs报错" class="headerlink" title="phatomjs报错"></a>phatomjs报错</h2><p><a href="https://cli.xuanwo.org/Tools/phatomjs.html#qxcbconnection-could-not-connect-to-display" target="_blank" rel="external">https://cli.xuanwo.org/Tools/phatomjs.html#qxcbconnection-could-not-connect-to-display</a></p>
+<p>当代码放到服务器上运行时候，出现了这样的报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QXcbConnection: Could not connect to display</span><br></pre></td></tr></table></figure>
+<p>这是因为源中的phatomjs默认运行在图形界面下，只需要在运行前执行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export QT_QPA_PLATFORM=offscreen</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+<h2 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h2><p>这个坑就比较隐蔽了，重复调试了很久。<br>在前面的流程中，我们有一个下载HTML页面并使用bs4解析的步骤。我之前的实现是通过<code>subprocess.Popen()</code>直接调用 <code>curl</code> 之后，就打开<code>test.html</code>。这样的实现导致了这样的一个问题：有可能网页还没有下载完，我就开始进行解析了，这样就会导致我的解析内容跟本就不正确。也就是说，<code>subprocess.Popen()</code> 不是一个阻塞的过程，它在调用完 <code>curl</code> 之后不会等到 <code>curl</code> 返回再结束。<br>定位到问题的话，解决起来就很容易了。通过查阅文档，我知道了可以通过这种方法来保证命令执行完毕再执行下一行代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">child = subprocess.Popon(&quot;curl xxxx.com &gt; test.html&quot;, shell=True)</span><br><span class="line">child.wait()</span><br></pre></td></tr></table></figure>
+<h2 id="回顾-amp-总结"><a href="#回顾-amp-总结" class="headerlink" title="回顾 &amp; 总结"></a>回顾 &amp; 总结</h2><p>这个小小的玩意儿开发没花多久，但是学到了很多东西。从之前自己一直以为很难不敢尝试的动态网页抓取到 Python subprocess 线程调度，果然不踩坑就不会有新的收获。<br>这次开发的东西比较敏感，涉及到公司内部的一些事务，所以代码就不开源出来了。有什么想法或者问题可以直接在评论区里提出来，我会尽量回复的。因为是一个一次性的小套件，所以没有怎么考虑优化上的事情，如果有更好的解决方案，也欢迎大家一起探讨，说不定下次就用上了呢~</p>
+<link href="/css/prism-solarizedlight.css" rel="stylesheet">]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;之前做了一些数据抓取的工作，期间也踩了一些坑，所以有了这篇文章。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Develop" scheme="https://xuanwo.org/categories/Develop/"/>
+    
+    
+      <category term="QingCloud" scheme="https://xuanwo.org/tags/QingCloud/"/>
+    
+      <category term="Work" scheme="https://xuanwo.org/tags/Work/"/>
+    
+      <category term="爬虫" scheme="https://xuanwo.org/tags/%E7%88%AC%E8%99%AB/"/>
+    
+  </entry>
+  
+  <entry>
     <title>NodeBB 升级迁移总结</title>
     <link href="https://xuanwo.org/2016/07/08/nodebb-upgrade/"/>
     <id>https://xuanwo.org/2016/07/08/nodebb-upgrade/</id>
     <published>2016-07-08T10:00:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="https://community.qingcloud.com/" target="_blank" rel="external">青云用户社区</a>使用了开源的 NodeBB 论坛，部署之初使用<code>0.7</code>版本，因为没有跟随官方进度进行更新，导致论坛版本长期停滞。一方面无法享受到官方的BUG Fix，另一方面也无法使用很多业务需求的插件。思量再三后决定对社区进行升级迁移，不在原论坛直接升级，而是部署一套新的环境，将原有的数据全部导出。</p>
 <a id="more"></a>
@@ -132,7 +195,7 @@
     <link href="https://xuanwo.org/2016/06/29/new-blog-new-life/"/>
     <id>https://xuanwo.org/2016/06/29/new-blog-new-life/</id>
     <published>2016-06-29T23:06:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>曾经看过我的博客的同学大概都会发现，我的博客再一次大变样了~<br>这一次的更新其实酝酿了很久，早在刚开始用Hexo的时候就想着要有一个自己的主题。但是那个时候觉得这是一件很难的事情，要懂HTML，CSS，JavaScript，还要懂Swig，Ejs等模板语言，还要懂Hexo的内部原理，于是就一直搁置了。在独立实现了一个<a href="https://xuanwo.org/2016/06/16/jade_ims/">完整的项目</a>之后，我认为自己已经有这样的能力了，于是决定正式开始。<br>在我看来的话，Hexo的使用者大概分为三个层次：第一种用别人的主题，第二种模仿现有的主题，第三种自己独立开发。我原来是第一种，在Next的基础上做了很多改动，这一次进入到了第二个层次。我找了一套自我感觉还不错的模板，然后套用它的CSS设定和页面结构，就成了我现在的主题。<br>利用两天学习和工作的闲暇时间，我大体上完成了这个主题。做得比较糙，很多细节还有待优化，但是我已经急不可耐地想要正式上线了，笑。在未来的话，我希望能把一些配置都能整理出来，优化一下代码，然后开源这个主题，希望大家能够喜欢~<br>庆祝的话已经说的差不多了，下面来讲一讲如何开发一个Hexo主题。</p>
 <a id="more"></a>
@@ -209,7 +272,7 @@
     <link href="https://xuanwo.org/2016/06/16/jade_ims/"/>
     <id>https://xuanwo.org/2016/06/16/jade_ims/</id>
     <published>2016-06-16T22:00:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<p><img src="/imgs/develop/jade-ims-index.png" alt=""></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这个项目从我们这个学期开了<strong>系统分析与设计</strong>这门课之后就开始了，首次创建这个项目是在3月26号，实际上真正的开发时间集中在6月上旬。差不多用两个星期的闲暇时间时间完成了这个简单的进销存系统。这个系统基于Flask框架，使用SQLite3数据库，前端则是使用Bootstrap框架，实现了包括客户，库存，销售，进货等管理子系统。说是管理，其实也就是简单的增加和删除而已。<br>前人经常说，不要重复造轮子。既然有类似于Odoo这样强大的ERP系统珠玉在前，我为什么要再自己造一个功能简单，甚至根本不会有人用的轮子呢？从前我确实是这么想的，但是稍微有一点工作经验之后发现再造轮子的原因有两条：</p>
@@ -284,7 +347,7 @@
     <link href="https://xuanwo.org/2016/06/03/owncloud-on-qingcloud/"/>
     <id>https://xuanwo.org/2016/06/03/owncloud-on-qingcloud/</id>
     <published>2016-06-03T08:00:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>因为实在不满意百度云的一些缺陷，我们最终决定部署一套团队内部使用的云存储平台，用于团队协作及资料长期存储。希望能够达到如下目标：</p>
 <ul>
@@ -464,7 +527,7 @@
     <link href="https://xuanwo.org/2016/05/29/learn-from-qingchat/"/>
     <id>https://xuanwo.org/2016/05/29/learn-from-qingchat/</id>
     <published>2016-05-29T20:57:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前的一段时间一直在从事<a href="https://github.com/Xuanwo/qingchat" target="_blank" rel="external">Qingchat</a>的相关开发工作，这个项目是一个基于Mojo-Weixin提供的Rest API开发的一个微信机器人，承担了十余个群，上千人的微信直播活动。秉承着ACM训练出来的“暴力加乱搞”风格，我花了大概一个星期的课余时间，搞出了一个可用的版本。期间也迭代了很多次，既欣慰于Coding的力量，也苦恼于当初设计的不完善带来的种种问题。在这个项目即将大规模重构的前夕，我总结一下开发Qingchat的过程中的经验教训，希望自己能成为一个更好更聪明的Coder。</p>
 <a id="more"></a>
@@ -490,9 +553,9 @@
     
       <category term="qingchat" scheme="https://xuanwo.org/tags/qingchat/"/>
     
-      <category term="实习" scheme="https://xuanwo.org/tags/%E5%AE%9E%E4%B9%A0/"/>
-    
       <category term="QingCloud" scheme="https://xuanwo.org/tags/QingCloud/"/>
+    
+      <category term="实习" scheme="https://xuanwo.org/tags/%E5%AE%9E%E4%B9%A0/"/>
     
   </entry>
   
@@ -501,7 +564,7 @@
     <link href="https://xuanwo.org/2016/05/09/msp430g2553-bellring/"/>
     <id>https://xuanwo.org/2016/05/09/msp430g2553-bellring/</id>
     <published>2016-05-09T08:42:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我萌萌哒的妹纸是一个代码苦手，完全无法理解 C 语言，所以每一次到单片机上机需要交作业的时候都是愁眉苦脸的样子。而我又总是因为自己确实不懂单片机里面的种种奇怪定义（中断，串口，P1.x 之类），所以也一直没有什么好办法去帮她。这一次的作业对编码能力要求较高，但是涉及到的硬件比较少，于是决定以此为契机，开始我的嵌入式开发之旅。</p>
 <a id="more"></a>
@@ -578,7 +641,7 @@
     <link href="https://xuanwo.org/2016/04/13/gitlab-install-intro/"/>
     <id>https://xuanwo.org/2016/04/13/gitlab-install-intro/</id>
     <published>2016-04-13T23:20:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>在跟网络中心的老师沟通成立镜像站的相关事宜的时候，意外地接下来搭建一套校内的 Git 服务的任务。<br><a href="https://imnerd.org/" target="_blank" rel="external">@怡红公子</a> 曾经搭建过一套类似的服务，但由于服务器端没有开启 VT 虚拟化导致不能安装 64 位的操作系统，再加上 Gitlab 不提供 32 位的安装包，所以长期以来怡红公子一直都是自行编译并配置 Gitlab 。考虑到后续维护的方便，我们决定趁着这个机会使用另一台支持安装 64 位操作系统的服务器，一劳永逸地解决这个问题。<br>我们的服务器环境是 <strong>CentOS 7.2 64bit</strong> ，以下所有操作均以此为基准。</p>
 <a id="more"></a>
@@ -686,7 +749,7 @@
     <link href="https://xuanwo.org/2016/04/04/docopt-intro/"/>
     <id>https://xuanwo.org/2016/04/04/docopt-intro/</id>
     <published>2016-04-04T21:39:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="https://github.com/Xuanwo/qingchat" target="_blank" rel="external"><code>Qingchat</code></a> 使用的命令行参数解释器是 <a href="http://docopt.org/" target="_blank" rel="external"><code>docopt</code></a>，用下来感觉非常棒，所以决定介绍一下这个库。（<em>奉劝各位看官，珍爱生命，远离argparse。</em>）</p>
 <a id="more"></a>
@@ -756,7 +819,7 @@
     <link href="https://xuanwo.org/2016/04/01/qingchat-intro/"/>
     <id>https://xuanwo.org/2016/04/01/qingchat-intro/</id>
     <published>2016-04-01T22:03:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在我之前写过的一篇文章中，我曾经探索过类似的问题：<a href="https://xuanwo.org/2016/02/28/wechat-remove/">微信群重复人员识别</a>。当初我就提出过能否自动获取相关数据，但因为种种原因的限制不了了之了。后来发现了<a href="https://github.com/sjdy521/Mojo-Weixin" target="_blank" rel="external">Mojo-Weixin</a>这个库之后，我决定在这个的基础上实现一个微信多群直播的工具——Qingchat。（<em>尽管在刚刚实现完不久，微信就更新了转发到多个群的功能，Sad。</em>）探索的成果如下： <a href="https://github.com/Xuanwo/qingchat" target="_blank" rel="external">Qingchat</a>，目前仅支持 python3 ，欢迎各位看官提 issues ，交 code ，或者拍砖。<br>接下来我会先介绍一下 Qingchat 的原理，然后介绍 Qingchat 的使用，最后展望一下 Qingchat 未来的发展方向。</p>
 <a id="more"></a>
@@ -859,7 +922,7 @@
     <link href="https://xuanwo.org/2016/03/13/gout/"/>
     <id>https://xuanwo.org/2016/03/13/gout/</id>
     <published>2016-03-13T13:44:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<p>其实我很想写出获奖感言的感觉，但是痛风发作的时候真的好疼啊。。。</p>
 <a id="more"></a>
@@ -897,7 +960,7 @@
     <link href="https://xuanwo.org/2016/03/12/neovim-slow-upgrade/"/>
     <id>https://xuanwo.org/2016/03/12/neovim-slow-upgrade/</id>
     <published>2016-03-12T11:00:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直都非常羡慕那些能把vim用得非常溜的人，但是自己总是不情愿去学，总是觉得vim的操作方式非常反人类，难度曲线太陡，不适合我。真正让我下定决心去学的，是因为系统切换到Ubuntu Gnome之后发现，Sublime Text 3 不能原生支持中文输入。同时我也发现，如果我不上来就折腾spf13这样的东西的话，其实vim非常好懂。于是，Neovim的慢速升级攻略就这样诞生了。</p>
 <a id="more"></a>
@@ -961,7 +1024,7 @@
     <link href="https://xuanwo.org/2016/02/28/wechat-remove/"/>
     <id>https://xuanwo.org/2016/02/28/wechat-remove/</id>
     <published>2016-02-28T10:05:00.000Z</published>
-    <updated>2016-09-12T17:18:13.851Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>由于微信的限制，人数超过一百以后，只有邀请才能加入。所以，如果想要组织大型的在线活动，就只有建立很多个分群。然而分群的问题在于，会有很多人重复加群，挤占了本来就缺乏的空间。所以需要找到一个可行的办法，清除两个群中的重复人员。</p>
 <a id="more"></a>
@@ -1005,7 +1068,7 @@
     <link href="https://xuanwo.org/2016/02/26/debug-for-hexo-1775/"/>
     <id>https://xuanwo.org/2016/02/26/debug-for-hexo-1775/</id>
     <published>2016-02-26T12:54:00.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p><a href="https://github.com/hexojs/hexo/issues/1775" target="_blank" rel="external">hexojs/hexo #1775</a><br>BUG非常明显，在使用hexo 3.1.1搭建一个位于子目录下的博客，然后会发现home以及categories的链接全都忽略了子目录的设定。</p>
 <a id="more"></a>
@@ -1046,7 +1109,7 @@
     <link href="https://xuanwo.org/2016/02/17/ipv6-in-cugb/"/>
     <id>https://xuanwo.org/2016/02/17/ipv6-in-cugb/</id>
     <published>2016-02-17T18:59:02.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<p>主旨只有两条：开源，节流</p>
 <a id="more"></a>
@@ -1133,7 +1196,7 @@
     <link href="https://xuanwo.org/2016/02/15/chocolatey-intro/"/>
     <id>https://xuanwo.org/2016/02/15/chocolatey-intro/</id>
     <published>2016-02-15T20:15:46.000Z</published>
-    <updated>2016-09-12T17:18:13.843Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="https://chocolatey.org/" target="_blank" rel="external">Chocolatey</a>是一个基于Nuget的Windows包管理工具，截止到我更新此文章的时候，一共有3.7k多个独立包。本文旨在介绍Chocolatey这一工具的安装和用法，希望能有更多人享受到该工具的便利之处。</p>
 <a id="more"></a>
@@ -1198,7 +1261,7 @@
     <link href="https://xuanwo.org/2016/02/04/unlock-your-smart-tv/"/>
     <id>https://xuanwo.org/2016/02/04/unlock-your-smart-tv/</id>
     <published>2016-02-04T23:12:52.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>现在很多人都买了智能电视，但是出于种种你懂得原因，厂商通常都不允许用户自行安装自己想要的APP，比如腾讯视频，优酷视频之类的。本教程旨在突破这些限制，彻底解放智能电视的全部潜力。</p>
 <a id="more"></a>
@@ -1287,7 +1350,7 @@
     <link href="https://xuanwo.org/2016/01/13/how-to-differ-invalid-link/"/>
     <id>https://xuanwo.org/2016/01/13/how-to-differ-invalid-link/</id>
     <published>2016-01-13T01:18:51.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.930Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前两天我的朋友圈被微信公开课活动的链接+截图刷屏，随后一大帮“业内人士”站出来说这个是盗号连接，只要点开，微信钱包和支付宝就会被盗。作为半个业内人士，我不能忍了，决定跟大家谈一谈如何识别真假链接。</p>
 <a id="more"></a>
@@ -1361,7 +1424,7 @@
     <link href="https://xuanwo.org/2016/01/03/vs-oracle-11g/"/>
     <id>https://xuanwo.org/2016/01/03/vs-oracle-11g/</id>
     <published>2016-01-03T15:31:32.000Z</published>
-    <updated>2016-09-12T17:18:13.847Z</updated>
+    <updated>2016-09-12T18:02:17.934Z</updated>
     
     <content type="html"><![CDATA[<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>宿主机：Win10 + VS2015 + ODP.Net for VS2015<br>虚拟机：Win7 + Oracle 11g + 桥接</p>
 <a id="more"></a>
@@ -1418,63 +1481,6 @@
       <category term="Oracle" scheme="https://xuanwo.org/tags/Oracle/"/>
     
       <category term="VB" scheme="https://xuanwo.org/tags/VB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>最佳跨平台PDF阅读解决方案</title>
-    <link href="https://xuanwo.org/2015/12/23/best-pdf-read-solution/"/>
-    <id>https://xuanwo.org/2015/12/23/best-pdf-read-solution/</id>
-    <published>2015-12-23T16:15:20.000Z</published>
-    <updated>2016-09-12T17:18:13.843Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近因为学习需要，要大量阅读纯文字的PDF文档。然后我惊讶地发现市场上居然没有哪家提供一套完整可用的跨平台PDF阅读解决方案，于是我在尝试了市面几乎所有叫得上名字的各类阅读器之后，形成了一套自己的跨平台PDF阅读解决方案。本文记录了这套方案的详细内容，希望会有所益处。</p>
-<a id="more"></a>
-<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><ul>
-<li>跨平台（目前支持Windows和Android）</li>
-<li>阅读记录同步</li>
-<li>支持标准PDF的批注和高亮等功能</li>
-<li>对PDF文件管理方便</li>
-</ul>
-<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>标准PDF的批注和高亮功能是内嵌在PDF文件中的，只要同步了PDF文件，也就同步了所有在PDF文件上的批注和高亮。因此这个问题很大程度上就变成了解决跨平台文件双向同步问题。</p>
-<blockquote>
-<p>跨平台双向同步在很多人看来是一个已经被Dropbox以及Google Drive解决了问题，但是实际上，它们在PC和移动端的行为是不一样的。PC端是完整的双向同步，而在移动端，为了节省流量和空间，它们都是提供了一个File list，你必须要自己下载指定文件。不仅如此，这个下载下来的文件大多是Read-Only的，用阅读器批注之后，你会发现这个文件无法保存，这样的话，PDF跨平台批注就无从谈起。</p>
-</blockquote>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>按照上面思路中的讨论，我在每一个平台上的解决方案都分成两个部分，第一是解决PDF阅读、批注问题，第二是解决PDF文件双向同步问题。</p>
-<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><h3 id="Goodsync"><a href="#Goodsync" class="headerlink" title="Goodsync"></a>Goodsync</h3><p><img src="/imgs/opinion/goodsync.png" alt="Goodsync"><br><a href="http://www.goodsync.com/" target="_blank" rel="external"><strong>Goodsync</strong></a>是一款非常强大的同步工具，我们通过它来提供本地到Google Drive的双向同步功能。</p>
-<blockquote>
-<p>如果通过SS艹墙，配置Google Drive时请勾选<code>基于WinInet</code>，如图：<img src="/imgs/opinion/goodsync-proxy-setting.png" alt="Goodsync Proxy Setting"></p>
-</blockquote>
-<h3 id="Foxit-Reader"><a href="#Foxit-Reader" class="headerlink" title="Foxit Reader"></a>Foxit Reader</h3><p><img src="/imgs/opinion/foxit-reader.png" alt="Foxit Reader"><br><a href="http://www.foxitsoftware.cn/" target="_blank" rel="external"><strong>Foxit Reader</strong></a>，也就是福昕阅读器，不多说了，新版的界面还是可以的。（尽管我觉得颜值没有Adobe Reader DC高）</p>
-<blockquote>
-<p>为什么不选Adobe？Adobe最新版本的批注功能在特定的PDF上好像有点问题，我尝试了几个都不能正常保存，总是提示错误110，无奈放弃。</p>
-</blockquote>
-<h2 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h2><h3 id="Flodersync"><a href="#Flodersync" class="headerlink" title="Flodersync"></a>Flodersync</h3><p><img src="/imgs/opinion/Flodersync.png" alt="Flodersync"><br><a href="https://play.google.com/store/apps/details?id=dk.tacit.android.foldersync.lite" target="_blank" rel="external"><strong>Flodersync</strong></a>是一款基于安卓平台的非常棒的一款应用，我们通过它来实现安卓平台的双向同步。</p>
-<blockquote>
-<p>开启双向同步请取消勾选<code>不同步删除</code></p>
-</blockquote>
-<h3 id="Moon"><a href="#Moon" class="headerlink" title="Moon+"></a>Moon+</h3><p><img src="/imgs/opinion/Moon.png" alt="Moon+"><br><a href="https://play.google.com/store/apps/details?id=com.flyersoft.moonreader" target="_blank" rel="external"><strong>Moon+</strong></a>，静读天下，安卓平台上首屈一指的阅读器，支持格式众多，速度流畅，除了免费版有些功能阉割和广告之外，没有别的问题。</p>
-<h1 id="更新日志"><a href="#更新日志" class="headerlink" title="更新日志"></a>更新日志</h1><ul>
-<li>2015年12月23日 初始发布</li>
-</ul>
-<link href="/css/prism-solarizedlight.css" rel="stylesheet">]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;最近因为学习需要，要大量阅读纯文字的PDF文档。然后我惊讶地发现市场上居然没有哪家提供一套完整可用的跨平台PDF阅读解决方案，于是我在尝试了市面几乎所有叫得上名字的各类阅读器之后，形成了一套自己的跨平台PDF阅读解决方案。本文记录了这套方案的详细内容，希望会有所益处。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Opinion" scheme="https://xuanwo.org/categories/Opinion/"/>
-    
-    
-      <category term="Read" scheme="https://xuanwo.org/tags/Read/"/>
-    
-      <category term="Software" scheme="https://xuanwo.org/tags/Software/"/>
-    
-      <category term="Windows" scheme="https://xuanwo.org/tags/Windows/"/>
-    
-      <category term="Android" scheme="https://xuanwo.org/tags/Android/"/>
     
   </entry>
   

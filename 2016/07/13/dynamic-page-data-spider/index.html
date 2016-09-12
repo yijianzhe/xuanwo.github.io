@@ -1,0 +1,451 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+<meta name="description" content="Long way to go">
+<meta name="author" content="Xuanwo">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/dist/css/animate.min.css">
+<link rel="stylesheet" href="/dist/css/style.css">
+<link rel="stylesheet" href="/dist/css/font-awesome.min.css">
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+    <title> 动态网页数据抓取踩坑分享 | Xuanwo's Blog </title>
+</head>
+<body id="home">
+<div id="menu" class="menu-right">
+    <ul>
+        <li>
+            <form class="menu-search">
+                <div class="form-group header">
+                    <span>
+                    <i class="fa fa-search searchico"></i>
+                    <input type="text" class="search-form-input ins-search-input" placeholder="Search" />
+                    <a href="#" class="close-menu"><i class="fa fa-close"></i></a>
+                        </span>
+                </div>
+            </form>
+        </li>
+        <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="/about"><i class="fa fa-user"></i>About</a></li>
+        <li class="submenu">
+            <a href="#"><i class="fa fa-book"></i>Categories<b class="caret"></b></a>
+            <ul class="submenu-list">
+                
+                    <li><a href="/categories/Opinion/">Opinion <span
+                                    class="badge">41</span></a></li>
+                
+                    <li><a href="/categories/Exercise/">Exercise <span
+                                    class="badge">323</span></a></li>
+                
+                    <li><a href="/categories/Daily/">Daily <span
+                                    class="badge">7</span></a></li>
+                
+                    <li><a href="/categories/Learn/">Learn <span
+                                    class="badge">4</span></a></li>
+                
+                    <li><a href="/categories/Develop/">Develop <span
+                                    class="badge">13</span></a></li>
+                
+                    <li><a href="/categories/Summary/">Summary <span
+                                    class="badge">4</span></a></li>
+                
+                    <li><a href="/categories/Operate/">Operate <span
+                                    class="badge">2</span></a></li>
+                
+                    <li><a href="/categories/Develope/">Develope <span
+                                    class="badge">1</span></a></li>
+                
+            </ul>
+        </li>
+        <li class="submenu">
+            <a href="#"><i class="fa fa-calendar"></i>Archives <b class="caret"></b></a>
+            <ul class="submenu-list"><li class="submenu-list-item"><a class="submenu-list-link" href="/archives/2016/">2016</a></li><li class="submenu-list-item"><a class="submenu-list-link" href="/archives/2015/">2015</a></li><li class="submenu-list-item"><a class="submenu-list-link" href="/archives/2014/">2014</a></li></ul>
+        </li>
+    </ul>
+</div>
+
+<div id="wrap">
+    <div id="main-nav" class="">
+    <div class="container">
+        <div class="nav-header">
+            <a class="nav-brand" href="/">Xuanwo's Blog</a>
+            <a class="menu-link nav-icon" href="#"><i class="fa fa-navicon"></i></a>
+        </div>
+    </div>
+</div>
+    <section id="hero" class="light-typo">
+    <div id="cover-image" class="image-bg animated fadeIn"></div>
+    <div class="container welcome-content">
+        <div class="middle-text">
+            <h1>Coding your future</h1>
+            <a class="btn smooth-scroll" href="#start">Get Stated</a>
+        </div>
+    </div>
+</section>
+    <div id="start" class="container content">
+        
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            
+    <article class="clearfix">
+        <div class="post-date">
+            发表于
+            <time datetime="2016-07-13T01:58:33+00:00"
+                  content="Jul 13 2016">
+                Jul 13 2016
+            </time>
+            &nbsp;|&nbsp;分类于
+            
+                
+                    <a href="/categories/Develop/" rel="index">
+                        Develop
+                        
+                        
+                    </a>
+                
+            
+            <span>
+            <a href="/2016/07/13/dynamic-page-data-spider/#disqus_thread" data-disqus-identifier="2016/07/13/dynamic-page-data-spider/">
+              <span class="disqus-comment-count" data-disqus-identifier="2016/07/13/dynamic-page-data-spider/"></span>
+            </a>
+          </span>
+        </div>
+        <h1><a href="/2016/07/13/dynamic-page-data-spider/">动态网页数据抓取踩坑分享</a></h1>
+        
+            <p>之前做了一些数据抓取的工作，期间也踩了一些坑，所以有了这篇文章。</p>
+<a id="more"></a>
+<h2 id="动态网页数据源获取"><a href="#动态网页数据源获取" class="headerlink" title="动态网页数据源获取"></a>动态网页数据源获取</h2><p>需要抓取的页面是使用<a href="https://facebook.github.io/react/" target="_blank" rel="external">React</a> JavaScript 框架开发的，所有的页面都是客户端渲染而成，这也就导致我只能看到一个个的 data-id ，没有办法直接获取数据。这就涉及到一个我之前没有接触过的领域——动态网页爬虫。<br>一番 Google 之后，我了解到动态网页爬虫大致上可以通过以下两种方法实现：</p>
+<ul>
+<li>分析网页代码结构和请求，找到数据源的请求链接</li>
+<li>调用Webkit渲染之后再进行抓取</li>
+</ul>
+<p>第二种方法相当于在命令行中跑一个浏览器，一个页面一个页面的打开，效率可想而知。再加上待抓取页面的 DOM 结构本来就比较复杂，没有添加相应的 class 和 id，导致即使渲染出来了想要抓到自己需要的数据也非常费劲。<br>于是只能采用第一种方案：分析了一下网页的代码之后发现所有的数据都是通过一个接口返回的。使用 Chrome 审查工具中的 <code>Network</code> 工具可以获取到所有的网络请求，在里面搜索 <code>JSON</code> ，找到了一个 JSON 的请求。点开一看正是我们需要的数据，解决了动态网页数据源的问题。</p>
+<h2 id="分类不统一"><a href="#分类不统一" class="headerlink" title="分类不统一"></a>分类不统一</h2><p>这个坑主要出在自己对目标网页的数据特性挖掘的不够。一开始以为目标网页是按照一个特定的分类来区分的，但是后来发现这个标准并不统一，最后抓取到的数据不在一个维度上。正当自己准备开工写很多特判的时候发现，如果从另外一个维度来索取数据的话，所有的数据都是统一的。<br>在这个案例中，就是将人为的分类切换成通过价格来获取数据，通过选择所有价格，就能获取到所有的数据，不需要再对不同维度的分类进行特判。<br>这个与其说是技术问题，更多的是一个经验的问题。</p>
+<h2 id="页面内部JS执行"><a href="#页面内部JS执行" class="headerlink" title="页面内部JS执行"></a>页面内部JS执行</h2><p>这个坑就比较有趣了。<br>目标网页除了通过一个特定的接口获取数据之外，还会在页面内部通过 JavaScript 来直接传递数据。背后的技术考量不得而知，但是摆在我面前的问题就是我要如何获取这些 JavaScript 代码中的数据。<br>思考了一下之后想到了两种方案：</p>
+<ul>
+<li>自行匹配需要的字符串</li>
+<li>通过 phatomjs 等工具执行页面内部的 js 代码，并输出需要的数据变量</li>
+</ul>
+<p>自行匹配的问题在于，我需要匹配的字符串的格式不一，很难直接匹配出我需要的数据。而通过 phatomjs 执行，就能比较好的解决这个问题。</p>
+<p>一个比较脏的解决方案是这样的：</p>
+<ol>
+<li>下载整个HTML页面到 <code>test.html</code></li>
+<li>通过 bs4 获取到所有的 <code>&lt;script&gt;</code> 标签内部的内容</li>
+<li>将我们需要的那个标签输出到一个 <code>data.js</code> 文件中</li>
+<li>之后把将数据构造成 json 的 js 代码写入 <code>data.js</code> 文件</li>
+<li>通过 phatomjs 来执行代码</li>
+<li>将输出通过 <code>json.loads</code> 载入并 append 到我们的数据数组中</li>
+</ol>
+<p>这样，我们就获得了页面内部js代码中数据的json形式。</p>
+<blockquote>
+<p>phatomjs 中执行的代码最后，千万要记得加上 <code>phatom.exit()</code>，否则不会自行退出。</p>
+</blockquote>
+<h2 id="phatomjs报错"><a href="#phatomjs报错" class="headerlink" title="phatomjs报错"></a>phatomjs报错</h2><p><a href="https://cli.xuanwo.org/Tools/phatomjs.html#qxcbconnection-could-not-connect-to-display" target="_blank" rel="external">https://cli.xuanwo.org/Tools/phatomjs.html#qxcbconnection-could-not-connect-to-display</a></p>
+<p>当代码放到服务器上运行时候，出现了这样的报错：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">QXcbConnection: Could not connect to display</span><br></pre></td></tr></table></figure>
+<p>这是因为源中的phatomjs默认运行在图形界面下，只需要在运行前执行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export QT_QPA_PLATFORM=offscreen</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+<h2 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h2><p>这个坑就比较隐蔽了，重复调试了很久。<br>在前面的流程中，我们有一个下载HTML页面并使用bs4解析的步骤。我之前的实现是通过<code>subprocess.Popen()</code>直接调用 <code>curl</code> 之后，就打开<code>test.html</code>。这样的实现导致了这样的一个问题：有可能网页还没有下载完，我就开始进行解析了，这样就会导致我的解析内容跟本就不正确。也就是说，<code>subprocess.Popen()</code> 不是一个阻塞的过程，它在调用完 <code>curl</code> 之后不会等到 <code>curl</code> 返回再结束。<br>定位到问题的话，解决起来就很容易了。通过查阅文档，我知道了可以通过这种方法来保证命令执行完毕再执行下一行代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">child = subprocess.Popon(&quot;curl xxxx.com &gt; test.html&quot;, shell=True)</span><br><span class="line">child.wait()</span><br></pre></td></tr></table></figure>
+<h2 id="回顾-amp-总结"><a href="#回顾-amp-总结" class="headerlink" title="回顾 &amp; 总结"></a>回顾 &amp; 总结</h2><p>这个小小的玩意儿开发没花多久，但是学到了很多东西。从之前自己一直以为很难不敢尝试的动态网页抓取到 Python subprocess 线程调度，果然不踩坑就不会有新的收获。<br>这次开发的东西比较敏感，涉及到公司内部的一些事务，所以代码就不开源出来了。有什么想法或者问题可以直接在评论区里提出来，我会尽量回复的。因为是一个一次性的小套件，所以没有怎么考虑优化上的事情，如果有更好的解决方案，也欢迎大家一起探讨，说不定下次就用上了呢~</p>
+<link href="/css/prism-solarizedlight.css" rel="stylesheet">
+        
+        <div class="post-footer">
+            
+                <div id="eof" class="print-invisible">
+                    <hr class="eof">
+                </div>
+                <div style="float:left;width:50%;text-align:center;margin-bottom:40px;">
+                    <a href="/imgs/dachui.jpg" title="微信扫一扫，获取新文章推送" class="fancybox" style="display:block" ;><img
+                                alt="微信扫一扫，获取新文章推送" style="display:inline-block;" src="/imgs/dachui.jpg"></a>
+          <span class="caption" style="color: #999;display: inline-block;font-size: .9em;text-align: center;">
+              微信扫一扫，获取新文章推送
+          </span>
+                </div>
+                <div style="float:left;width:50%;text-align:center;margin-bottom:40px;">
+                    <a href="/imgs/wechat.png" title="微信扫一扫，请博主喝咖啡" class="fancybox" style="display:block;"><img
+                                alt="微信扫一扫，请博主喝咖啡" style="display:inline-block;" src="/imgs/wechat.png"></a>
+          <span class="caption" style="color: #999;display: inline-block;font-size: .9em;text-align: center;">
+              微信扫一扫，请博主喝咖啡
+          </span>
+                </div>
+                <div class="copyright" style="clear:both;">
+                    <p><span>本文标题:</span><a href="/2016/07/13/dynamic-page-data-spider/">动态网页数据抓取踩坑分享</a></p>
+                    <p><span>文章作者:</span><a href="/" title="访问 Xuanwo 的个人博客">Xuanwo</a></p>
+                    <p><span>发布时间:</span>2016年7月13日 - 01时07分</p>
+                    <p><span>最后更新:</span>2016年9月12日 - 18时09分</p>
+                    <p><span>原始链接:</span><a href="/2016/07/13/dynamic-page-data-spider/"
+                                            title="动态网页数据抓取踩坑分享">https://xuanwo.org/2016/07/13/dynamic-page-data-spider/</a></p>
+                    <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license"
+                                                                                   href="http://creativecommons.org/licenses/by-nc/4.0/"
+                                                                                   title="Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)">Attribution-NonCommercial
+                            4.0</a></p>
+                    <p><span>转载请保留以上信息。</span></p>
+                </div>
+            
+            
+                <div class="post-tags">
+                    
+                        <a href="/tags/QingCloud/"> #QingCloud </a>
+                    
+                        <a href="/tags/Work/"> #Work </a>
+                    
+                        <a href="/tags/爬虫/"> #爬虫 </a>
+                    
+                </div>
+            
+        </div>
+    </article>
+
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
+                    this.page.url = 'https://xuanwo.org/2016/07/13/dynamic-page-data-spider/';
+                    this.page.identifier = '2016/07/13/dynamic-page-data-spider/';
+                };
+                (function () {
+                    var d = document, s = d.createElement('script');
+                    s.src = '//only0god.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+        </div>
+    </div>
+
+    </div>
+    <footer>
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2 col-md-2 footer-widget">
+                    <h3>Statistics</h3>
+
+                    <span>No BB, just do it!</span>
+
+                    <div class="stats">
+                        <div class="line">
+                            <span class="counter">395</span>
+                            <span class="caption">Articles</span>
+                        </div>
+                        <div class="line">
+                            <span class="counter">8</span>
+                            <span class="caption">Categories</span>
+                        </div>
+                        <div class="line">
+                            <span class="counter">58</span>
+                            <span class="caption">Tags</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-md-4 footer-widget">
+                    <h3>Recent posts</h3>
+                    <div class="post-recent-widget">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/nodebb-plugin-html5videoplayer/">nodebb-plugin-html5videoplayer 发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/13/dynamic-page-data-spider/">动态网页数据抓取踩坑分享</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/08/nodebb-upgrade/">NodeBB 升级迁移总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/29/new-blog-new-life/">新博客上线&Hexo主题开发入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/16/jade_ims/">马可波罗珠宝进销存系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/03/owncloud-on-qingcloud/">在QingCloud上部署弹性扩容的OwnCloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/29/learn-from-qingchat/">我从Qingchat中学到的教训</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/09/msp430g2553-bellring/">基于MSP430G2553的打铃系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/gitlab-install-intro/">Gitlab部署和汉化以及简单运维</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/04/docopt-intro/">docopt——好用的Python命令行参数解释器</a></li></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-6 footer-widget clearfix">
+                    <h3>Tags</h3>
+                    <ul class="tags">
+                        
+                            <li><a href="/tags/Google/">Google</a></li>
+                        
+                            <li><a href="/tags/CloudFlare/">CloudFlare</a></li>
+                        
+                            <li><a href="/tags/FuckWall/">FuckWall</a></li>
+                        
+                            <li><a href="/tags/PHP/">PHP</a></li>
+                        
+                            <li><a href="/tags/Web/">Web</a></li>
+                        
+                            <li><a href="/tags/Event/">Event</a></li>
+                        
+                            <li><a href="/tags/Github/">Github</a></li>
+                        
+                            <li><a href="/tags/CI/">CI</a></li>
+                        
+                            <li><a href="/tags/Read/">Read</a></li>
+                        
+                            <li><a href="/tags/Markdown/">Markdown</a></li>
+                        
+                            <li><a href="/tags/Hexo/">Hexo</a></li>
+                        
+                            <li><a href="/tags/Github-Pages/">Github-Pages</a></li>
+                        
+                            <li><a href="/tags/Blog/">Blog</a></li>
+                        
+                            <li><a href="/tags/VPS/">VPS</a></li>
+                        
+                            <li><a href="/tags/Software/">Software</a></li>
+                        
+                            <li><a href="/tags/Windows/">Windows</a></li>
+                        
+                            <li><a href="/tags/Android/">Android</a></li>
+                        
+                            <li><a href="/tags/C/">C</a></li>
+                        
+                            <li><a href="/tags/Database/">Database</a></li>
+                        
+                            <li><a href="/tags/复习/">复习</a></li>
+                        
+                            <li><a href="/tags/Nodejs/">Nodejs</a></li>
+                        
+                            <li><a href="/tags/Python/">Python</a></li>
+                        
+                            <li><a href="/tags/qingchat/">qingchat</a></li>
+                        
+                            <li><a href="/tags/QingCloud/">QingCloud</a></li>
+                        
+                            <li><a href="/tags/Work/">Work</a></li>
+                        
+                            <li><a href="/tags/爬虫/">爬虫</a></li>
+                        
+                            <li><a href="/tags/运维/">运维</a></li>
+                        
+                            <li><a href="/tags/CUGBLUG/">CUGBLUG</a></li>
+                        
+                            <li><a href="/tags/Gitlab/">Gitlab</a></li>
+                        
+                            <li><a href="/tags/科普/">科普</a></li>
+                        
+                            <li><a href="/tags/Information/">Information</a></li>
+                        
+                            <li><a href="/tags/CUGB/">CUGB</a></li>
+                        
+                            <li><a href="/tags/项目/">项目</a></li>
+                        
+                            <li><a href="/tags/Flask/">Flask</a></li>
+                        
+                            <li><a href="/tags/HTML/">HTML</a></li>
+                        
+                            <li><a href="/tags/JavaScript/">JavaScript</a></li>
+                        
+                            <li><a href="/tags/实习/">实习</a></li>
+                        
+                            <li><a href="/tags/单片机/">单片机</a></li>
+                        
+                            <li><a href="/tags/Hardware/">Hardware</a></li>
+                        
+                            <li><a href="/tags/vim/">vim</a></li>
+                        
+                            <li><a href="/tags/Node-js/">Node.js</a></li>
+                        
+                            <li><a href="/tags/NodeBB/">NodeBB</a></li>
+                        
+                            <li><a href="/tags/Video/">Video</a></li>
+                        
+                            <li><a href="/tags/JSON/">JSON</a></li>
+                        
+                            <li><a href="/tags/字符串/">字符串</a></li>
+                        
+                            <li><a href="/tags/Linux/">Linux</a></li>
+                        
+                            <li><a href="/tags/SSH/">SSH</a></li>
+                        
+                            <li><a href="/tags/Together/">Together</a></li>
+                        
+                            <li><a href="/tags/虚拟化/">虚拟化</a></li>
+                        
+                            <li><a href="/tags/协作/">协作</a></li>
+                        
+                            <li><a href="/tags/翻译/">翻译</a></li>
+                        
+                            <li><a href="/tags/Wiki/">Wiki</a></li>
+                        
+                            <li><a href="/tags/Develop/">Develop</a></li>
+                        
+                            <li><a href="/tags/Mac/">Mac</a></li>
+                        
+                            <li><a href="/tags/Oracle/">Oracle</a></li>
+                        
+                            <li><a href="/tags/VB/">VB</a></li>
+                        
+                            <li><a href="/tags/微信/">微信</a></li>
+                        
+                            <li><a href="/tags/Games/">Games</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <div class="container">
+            <p class="pull-left">Designed by <a href="http://xuanwo.org">Xuanwo.</a> Powered by <a
+                        href="https://hexo.io">Hexo.</a></p>
+            <ul class="social-links pull-right">
+                <li><a href="https://twitter.com/OnlyXuanwo"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="https://www.facebook.com/onlyxuanwo"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="https://plus.google.com/u/0/116093463258836167644"><i class="fa fa-google-plus"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+
+<div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Search Anything You Want" />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: 'Untitled',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script type="text/javascript" src="/dist/js/jquery.min.js"></script>
+<script type="text/javascript" src="/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/dist/js/wow.min.js"></script>
+<script type="text/javascript" src="/dist/js/custom.js"></script>
+<script src="/dist/js/insight.js"></script>
+<script id="dsq-count-scr" src="//only0god.disqus.com/count.js" async></script>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-51515330-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+</div>
+</body>
+</html>

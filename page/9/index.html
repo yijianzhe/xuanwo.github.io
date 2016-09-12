@@ -49,7 +49,7 @@
                                     class="badge">4</span></a></li>
                 
                     <li><a href="/categories/Develop/">Develop <span
-                                    class="badge">12</span></a></li>
+                                    class="badge">13</span></a></li>
                 
                     <li><a href="/categories/Summary/">Summary <span
                                     class="badge">4</span></a></li>
@@ -57,7 +57,7 @@
                     <li><a href="/categories/Operate/">Operate <span
                                     class="badge">2</span></a></li>
                 
-                    <li><a href="/categories/Developer/">Developer <span
+                    <li><a href="/categories/Develope/">Develope <span
                                     class="badge">1</span></a></li>
                 
             </ul>
@@ -91,6 +91,46 @@
         
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            
+                
+    <article class="clearfix">
+        <div class="post-date">
+            发表于
+            <time datetime="2014-11-16T16:16:48+00:00"
+                  content="Nov 16 2014">
+                Nov 16 2014
+            </time>
+            &nbsp;|&nbsp;分类于
+            
+                
+                    <a href="/categories/Exercise/" rel="index">
+                        Exercise
+                        
+                        
+                    </a>
+                
+            
+            <span>
+            <a href="/2014/11/16/UVa-12563-Jin-Ge-Jin-Qu-hao/#disqus_thread" data-disqus-identifier="2014/11/16/UVa-12563-Jin-Ge-Jin-Qu-hao/">
+              <span class="disqus-comment-count" data-disqus-identifier="2014/11/16/UVa-12563-Jin-Ge-Jin-Qu-hao/"></span>
+            </a>
+          </span>
+        </div>
+        <h1><a href="/2014/11/16/UVa-12563-Jin-Ge-Jin-Qu-hao/">UVa 12563 Jin Ge Jin Qu hao</a></h1>
+        
+            
+                <h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>源地址：</p>
+<p><a href="http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=4008">http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=4008</a></p>
+<h1 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h1><p>~看完题目的名字就情不自禁的笑了= =。~<br>这就是一个变形的背包问题：在t-1的时间内，最多可以选择多少歌曲使得歌曲数最多并且播放时间最长，差不多可以类比于ACM竞赛中的AC数和罚时。先比较播放歌曲数，取歌曲数较多者；如果歌曲数相同，比较播放时长，取播放时间较长的。<br>处理之后，就成了一个背包+一些判断的问题。</p>
+                <a class="" href="/2014/11/16/UVa-12563-Jin-Ge-Jin-Qu-hao/">Read more</a>
+            
+        
+        <div class="post-footer">
+            
+            
+        </div>
+    </article>
+
             
                 
     <article class="clearfix">
@@ -455,46 +495,6 @@
     </article>
 
             
-                
-    <article class="clearfix">
-        <div class="post-date">
-            发表于
-            <time datetime="2014-11-15T11:04:23+00:00"
-                  content="Nov 15 2014">
-                Nov 15 2014
-            </time>
-            &nbsp;|&nbsp;分类于
-            
-                
-                    <a href="/categories/Exercise/" rel="index">
-                        Exercise
-                        
-                        
-                    </a>
-                
-            
-            <span>
-            <a href="/2014/11/15/UVa-1025-A-Spy-in-the-Metro/#disqus_thread" data-disqus-identifier="2014/11/15/UVa-1025-A-Spy-in-the-Metro/">
-              <span class="disqus-comment-count" data-disqus-identifier="2014/11/15/UVa-1025-A-Spy-in-the-Metro/"></span>
-            </a>
-          </span>
-        </div>
-        <h1><a href="/2014/11/15/UVa-1025-A-Spy-in-the-Metro/">UVa 1025 A Spy in the Metro</a></h1>
-        
-            
-                <h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>源地址：</p>
-<p><a href="http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=3466">http://uva.onlinejudge.org/index.php?option=com_onlinejudge&amp;Itemid=8&amp;page=show_problem&amp;problem=3466</a></p>
-<h1 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h1><p>其实题目还是蛮吓人的= =，因为上来就是Line1~7的输入。其实题意不难，有从左到右编号为1~n的车站，有m1辆车从第1站往右开，有m2辆车从第2站往左开。主角在t=0的时候从第1站出发，要在t时刻遇见车站n的一个间谍。要求求出最短的等待时间，没有的话就输出impossible。<br>小脑一动，可以知道，每一次有三个选择：等待，向左，向右。我们可以用dp[t][i]来表示第t时刻在第i个车站，然后用vis[t][i][sta]来表示三种选择。全部预处理一遍之后，dp求解最短时间即可。</p>
-                <a class="" href="/2014/11/15/UVa-1025-A-Spy-in-the-Metro/">Read more</a>
-            
-        
-        <div class="post-footer">
-            
-            
-        </div>
-    </article>
-
-            
 
             
     <nav class="pagination">
@@ -516,7 +516,7 @@
 
                     <div class="stats">
                         <div class="line">
-                            <span class="counter">394</span>
+                            <span class="counter">395</span>
                             <span class="caption">Articles</span>
                         </div>
                         <div class="line">
@@ -535,7 +535,7 @@
                     <div class="post-recent-widget">
                         <div class="row">
                             <div class="col-sm-12">
-                                <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/nodebb-plugin-html5videoplayer/">nodebb-plugin-html5videoplayer 发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/08/nodebb-upgrade/">NodeBB 升级迁移总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/29/new-blog-new-life/">新博客上线&Hexo主题开发入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/16/jade_ims/">马可波罗珠宝进销存系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/03/owncloud-on-qingcloud/">在QingCloud上部署弹性扩容的OwnCloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/29/learn-from-qingchat/">我从Qingchat中学到的教训</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/09/msp430g2553-bellring/">基于MSP430G2553的打铃系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/gitlab-install-intro/">Gitlab部署和汉化以及简单运维</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/04/docopt-intro/">docopt——好用的Python命令行参数解释器</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/01/qingchat-intro/">微信多群直播的新探索——Qingchat</a></li></ul>
+                                <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/nodebb-plugin-html5videoplayer/">nodebb-plugin-html5videoplayer 发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/13/dynamic-page-data-spider/">动态网页数据抓取踩坑分享</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/08/nodebb-upgrade/">NodeBB 升级迁移总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/29/new-blog-new-life/">新博客上线&Hexo主题开发入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/16/jade_ims/">马可波罗珠宝进销存系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/03/owncloud-on-qingcloud/">在QingCloud上部署弹性扩容的OwnCloud</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/29/learn-from-qingchat/">我从Qingchat中学到的教训</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/09/msp430g2553-bellring/">基于MSP430G2553的打铃系统开发手记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/13/gitlab-install-intro/">Gitlab部署和汉化以及简单运维</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/04/docopt-intro/">docopt——好用的Python命令行参数解释器</a></li></ul>
                             </div>
                         </div>
                     </div>
@@ -585,11 +585,17 @@
                         
                             <li><a href="/tags/复习/">复习</a></li>
                         
+                            <li><a href="/tags/Nodejs/">Nodejs</a></li>
+                        
                             <li><a href="/tags/Python/">Python</a></li>
                         
                             <li><a href="/tags/qingchat/">qingchat</a></li>
                         
-                            <li><a href="/tags/Nodejs/">Nodejs</a></li>
+                            <li><a href="/tags/QingCloud/">QingCloud</a></li>
+                        
+                            <li><a href="/tags/Work/">Work</a></li>
+                        
+                            <li><a href="/tags/爬虫/">爬虫</a></li>
                         
                             <li><a href="/tags/运维/">运维</a></li>
                         
@@ -612,12 +618,6 @@
                             <li><a href="/tags/JavaScript/">JavaScript</a></li>
                         
                             <li><a href="/tags/实习/">实习</a></li>
-                        
-                            <li><a href="/tags/QingCloud/">QingCloud</a></li>
-                        
-                            <li><a href="/tags/Work/">Work</a></li>
-                        
-                            <li><a href="/tags/爬虫/">爬虫</a></li>
                         
                             <li><a href="/tags/单片机/">单片机</a></li>
                         
